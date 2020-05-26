@@ -95,49 +95,49 @@ for (effect in effects) {
 # coef.mat <- t(apply(fits@boot$t,2,function(x)quantile(x,ci95)))
 # matplot(x=df.coef, y=1:nrow(coef.mat))
 
-# 
-# ##===============================================
-# ## interpreation data frame i-->j (for all t)
-# ##-----------------------------------------------
-# g <- asIgraph(nets[[length(nets)]])
-# vcnt <- vcount(g)
-# time.steps <- fits@time.steps
-# firm.names <-  V(g)$vertex.names
-# v.focal <- as.integer( V(g)[V(g)$vertex.names==name_i] )
-# 
-# ## make data frame of predicted probabilities
-# # for (t in 1:time.steps)
-# #   idf[,paste0('t',t)]<- NA
-# # ## time columns
-# # tcolnames <- names(idf)[grep(names(idf), pattern = 't\\d{1,3}', perl = T)]
-# 
-# ## competitor probability micro-interpretation  file
-# interp.df.file <- sprintf('%s/interpret_%s_pd%s_d%s_R%s_%s.csv', 
-#                           results_dir, name_i, nPeriods, d, R, m_x)
-# 
-# ## main loop: competitor probability micro-interpretation
-# if (file.exists(interp.df.file)) {
-#   ## READ IN PREDICTED PROBS
-#   idf <- read.csv(interp.df.file)
-# } else {
-#   idf <- data.frame()
-#   for (j in 1:vcount(g)) {
-#     cat(sprintf('%s:  %s\n',j,V(g)$vertex.names[j]))
-#     j.name <- V(g)$vertex.names[j]
-#     if (j == v.focal) {
-#       probs <- rep(0, time.steps)
-#     } else {
-#       probs <- btergm::interpret(fits, type='tie', i=v.focal, j=j)
-#     }
-#     for (t in 1:length(probs)) {
-#       d <- igraph::distances(asIgraph(nets[[t+1]]), v = v.focal, to = j)[1,1]
-#       tmp <- data.frame(i=v.focal, j=j, i.name=name_i, j.name=j.name, t=t, d=d, p=probs[t])
-#       idf <- rbind(idf, tmp)
-#     }
-#     if (j %% 10 == 0)  write.csv(x = idf, file = interp.df.file)
-#   }
-#   write.csv(x = idf, file = interp.df.file)
-# }
+
+##===============================================
+## interpreation data frame i-->j (for all t)
+##-----------------------------------------------
+g <- asIgraph(nets[[length(nets)]])
+vcnt <- vcount(g)
+time.steps <- fits@time.steps
+firm.names <-  V(g)$vertex.names
+v.focal <- as.integer( V(g)[V(g)$vertex.names==name_i] )
+
+## make data frame of predicted probabilities
+# for (t in 1:time.steps)
+#   idf[,paste0('t',t)]<- NA
+# ## time columns
+# tcolnames <- names(idf)[grep(names(idf), pattern = 't\\d{1,3}', perl = T)]
+
+## competitor probability micro-interpretation  file
+interp.df.file <- sprintf('%s/interpret_%s_pd%s_d%s_R%s_%s.csv',
+                          results_dir, name_i, nPeriods, d, R, m_x)
+
+## main loop: competitor probability micro-interpretation
+if (file.exists(interp.df.file)) {
+  ## READ IN PREDICTED PROBS
+  idf <- read.csv(interp.df.file)
+} else {
+  idf <- data.frame()
+  for (j in 1:vcount(g)) {
+    cat(sprintf('%s:  %s\n',j,V(g)$vertex.names[j]))
+    j.name <- V(g)$vertex.names[j]
+    if (j == v.focal) {
+      probs <- rep(0, time.steps)
+    } else {
+      probs <- btergm::interpret(fits, type='tie', i=v.focal, j=j)
+    }
+    for (t in 1:length(probs)) {
+      d <- igraph::distances(asIgraph(nets[[t+1]]), v = v.focal, to = j)[1,1]
+      tmp <- data.frame(i=v.focal, j=j, i.name=name_i, j.name=j.name, t=t, d=d, p=probs[t])
+      idf <- rbind(idf, tmp)
+    }
+    if (j %% 10 == 0)  write.csv(x = idf, file = interp.df.file)
+  }
+  write.csv(x = idf, file = interp.df.file)
+}
 
 ###
 ## READ IN Interpreataion Predicted Probabilities
